@@ -1,0 +1,54 @@
+{
+  "guidelines": [
+    {
+      "id": "B1",
+      "guideline": "Avoid using blocking functions like printf() inside ISRs.",
+      "description": "ISRs must be fast and deterministic. Using blocking calls like printf() may disrupt timing.",
+      "pattern": "printf\\s*\\(",
+      "applies_to": ["ISR"],
+      "phase": "Firmware Development",
+      "os_specific": [],
+      "tags": ["ISR", "Blocking", "Real-time", "printf"]
+    },
+    {
+      "id": "B2",
+      "guideline": "Disable interrupts before configuring or triggering ISRs.",
+      "description": "Avoids unintended ISR execution during setup.",
+      "pattern": "NVIC_EnableIRQ|__enable_irq\\s*\\(",
+      "applies_to": ["ISR Config"],
+      "phase": "Firmware Development",
+      "os_specific": [],
+      "tags": ["ISR", "Interrupts", "Configuration"]
+    },
+    {
+      "id": "B3",
+      "guideline": "Avoid dynamic memory allocation in embedded systems.",
+      "description": "Dynamic memory allocation like malloc() can cause fragmentation and unpredictable behavior in constrained systems.",
+      "pattern": "malloc\\s*\\(|calloc\\s*\\(|realloc\\s*\\(",
+      "applies_to": ["Memory"],
+      "phase": "Firmware Development",
+      "os_specific": [],
+      "tags": ["Memory", "Dynamic Allocation", "malloc"]
+    },
+    {
+      "id": "B4",
+      "guideline": "Avoid infinite loops without sleep or yield in RTOS environments.",
+      "description": "Without yield/sleep, tight loops can starve other RTOS tasks.",
+      "pattern": "while\\s*\\(1\\)",
+      "applies_to": ["RTOS"],
+      "phase": "Firmware Development",
+      "os_specific": ["FreeRTOS", "Zephyr"],
+      "tags": ["Loop", "RTOS", "Sleep"]
+    },
+    {
+      "id": "B5",
+      "guideline": "Declare shared ISR variables as volatile.",
+      "description": "Prevents compiler optimization that could skip updates from ISR context.",
+      "pattern": "\\bint\\b.*\\bshared_var\\b",
+      "applies_to": ["Memory"],
+      "phase": "Firmware Development",
+      "os_specific": [],
+      "tags": ["volatile", "Memory Safety", "ISR"]
+    }
+  ]
+}
