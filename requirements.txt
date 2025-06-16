@@ -1,7 +1,0 @@
-langchain>=0.1.17
-litellm[proxy]>=1.31.6
-openai  
-tqdm
-python-dotenv
-rich
-langchain_litellm

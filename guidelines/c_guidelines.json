@@ -1,0 +1,37 @@
+[
+  {
+    "id": "G001",
+    "description": "Avoid usage of ## operator",
+    "severity": "high",
+    "pattern": "##",
+    "suggestion": "Use proper macro expansion instead of token pasting"
+  },
+  {
+    "id": "G002",
+    "description": "Avoid usage of void pointers",
+    "severity": "medium",
+    "pattern": "void\\s*\\*",
+    "suggestion": "Use specific pointer types for better type safety"
+  },
+  {
+    "id": "G003",
+    "description": "Do not use printf() inside ISRs",
+    "severity": "critical",
+    "pattern": "printf\\s*\\(",
+    "suggestion": "Use non-blocking logging or set flags in ISR"
+  },
+  {
+    "id": "G004",
+    "description": "Avoid usage of function pointers for non-callback logic",
+    "severity": "medium",
+    "pattern": "\\*\\s*\\(\\s*\\*.*\\)\\s*\\(",
+    "suggestion": "Use direct function calls unless it's a true callback mechanism"
+  },
+  {
+    "id": "G005",
+    "description": "Avoid global variables across modules",
+    "severity": "high",
+    "pattern": "^\\s*int\\s+[a-zA-Z_][a-zA-Z0-9_]*\\s*;",
+    "suggestion": "Encapsulate variables within functions or mark them static if needed locally"
+  }
+]

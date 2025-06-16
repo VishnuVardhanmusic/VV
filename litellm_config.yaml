@@ -1,0 +1,6 @@
+model_list:
+  - model_name: ollama/llama3
+    litellm_provider: ollama
+    model_info:
+      model: llama3
+      api_base: http://localhost:11434
