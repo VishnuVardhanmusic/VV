@@ -1,34 +1,25 @@
-import argparse
-from rule_loader import loadGuidelines
-from code_loader import readCodeFile
-from prompt_manager import buildPrompt
-from review_engine import runReview, saveReviewToFile
+from src.review_engine import runReview
 
 def main():
-    parser = argparse.ArgumentParser(description="Embedded C Code Reviewer")
-    parser.add_argument("filepath", help="Path to input .c or .h file")
-    parser.add_argument("--guidelines", default="guidelines/c_guidelines.json", help="Path to guideline JSON file")
-    parser.add_argument("--output", default="code_review.json", help="Path to save JSON review result")
-    args = parser.parse_args()
+    # 🛠 Configuration
+    inputCodePath = "test_cases/sample.c"
+    guidelinePath = "guidelines/c_guidelines.json"
+    outputPath = "output/code_review.json"
 
-    try:
-        print("📥 Loading guidelines...")
-        rules = loadGuidelines(args.guidelines)
+    # 🔐 LiteLLM Proxy Credentials
+    proxy_url = "http://localhost:8000/v1/chat/completions"
+    model_name = "anthropic.claude-3-5-sonnet-20241022-v2:0"
+    api_key = "your-liteLLM-key"  # Replace with your real LiteLLM API key
 
-        print("📄 Reading source code...")
-        code = readCodeFile(args.filepath)
-
-        print("✍️  Building review prompt...")
-        prompt = buildPrompt(code, rules)
-
-        print("🤖 Reviewing code via Claude 3.5 (LangChain)...")
-        reviewResult = runReview(prompt)
-
-        print("💾 Saving review remarks...")
-        saveReviewToFile(reviewResult, args.output)
-
-    except Exception as e:
-        print(f"❌ Error: {str(e)}")
+    # 🚀 Run the code review
+    runReview(
+        inputCodePath=inputCodePath,
+        guidelinePath=guidelinePath,
+        outputPath=outputPath,
+        proxy_url=proxy_url,
+        model_name=model_name,
+        api_key=api_key
+    )
 
 if __name__ == "__main__":
     main()

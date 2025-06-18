@@ -1,8 +1,0 @@
-[
-    {
-        "lineNumber": 13,
-        "ruleViolated": "G001",
-        "explanation": "Usage of '##' token pasting found.",
-        "suggestedFix": "Avoid macro token pasting. Consider better macro design."
-    }
-]

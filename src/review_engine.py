@@ -1,49 +1,60 @@
+import os
 import json
-import re
-from llm_provider import getClaudeChain
 
-def runReview(prompt, max_tokens=2048):
+from src.loaders.rule_loader import loadGuidelines
+from src.loaders.code_loader import parseCodeFile
+from src.agents.prompt_manager import buildPrompt
+from src.llm.llm_provider import PydanticClaudeAgent
+
+def runReview(
+    inputCodePath: str,
+    guidelinePath: str,
+    outputPath: str,
+    proxy_url: str,
+    model_name: str,
+    api_key: str
+) -> None:
     """
-    Sends the prompt to the Claude model via LangChain and returns JSON feedback.
+    Executes the end-to-end code review pipeline:
+    1. Loads guidelines
+    2. Loads C source code
+    3. Builds the prompt
+    4. Queries Claude LLM via proxy
+    5. Saves review output to JSON
 
     Args:
-        prompt (str): The prompt to review code.
-        max_tokens (int): Token limit (still passed to LLM config).
-
-    Returns:
-        list: List of JSON review remarks returned by the model.
+        inputCodePath (str): Path to the C/C++ source file.
+        guidelinePath (str): Path to the guideline JSON file.
+        outputPath (str): Path to store the output JSON.
+        proxy_url (str): LiteLLM proxy endpoint.
+        model_name (str): Claude model name.
+        api_key (str): Authorization token for LiteLLM.
     """
-    try:
-        chain = getClaudeChain()
-        output = chain.run(code_review_prompt=prompt)
 
-        # Extract first valid JSON array using regex
-        json_match = re.search(r'\[\s*{.*?}\s*\]', output, re.DOTALL)
-        if json_match:
-            json_str = json_match.group(0)
-            review_json = json.loads(json_str)
-            return review_json
-        else:
-            print("❌ Could not extract valid JSON array from LLM response.")
-            print("📝 Raw Output:\n", output)
-            return []
+    print("🚀 Starting Code Review Agent...\n")
 
-    except json.JSONDecodeError:
-        print("❌ LLM response was not valid JSON.")
-        return []
-    except Exception as e:
-        print("❌ Error during review:", str(e))
-        return []
+    # 1️⃣ Load rules
+    rules = loadGuidelines(guidelinePath)
+    print(f"✅ Loaded {len(rules)} coding rules.")
 
+    # 2️⃣ Load input C code
+    codeLines = parseCodeFile(inputCodePath)
+    print(f"📄 Loaded {len(codeLines)} lines from code file.")
 
-def saveReviewToFile(reviewData, outputPath="code_review.json"):
-    """
-    Saves the final review remarks to a JSON file.
+    # 3️⃣ Build review prompt
+    prompt = buildPrompt(codeLines, rules)
 
-    Args:
-        reviewData (list): List of remark dictionaries.
-        outputPath (str): Path to the output file.
-    """
-    with open(outputPath, 'w') as f:
-        json.dump(reviewData, f, indent=4)
-    print(f"✅ Review saved to: {outputPath}")
+    # 4️⃣ Call Claude via Pydantic-AI
+    llm = PydanticClaudeAgent(proxy_url, model_name, api_key)
+    review_result = llm.getReview(prompt)
+
+    if review_result is None:
+        print("❌ Review failed. No output generated.")
+        return
+
+    # 5️⃣ Save output to JSON
+    os.makedirs(os.path.dirname(outputPath), exist_ok=True)
+    with open(outputPath, 'w') as out_file:
+        json.dump(review_result, out_file, indent=4)
+        print(f"✅ Review saved to {outputPath}")
+
