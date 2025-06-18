@@ -15,23 +15,114 @@
   },
   {
     "id": "G003",
-    "description": "Do not use printf() inside ISRs",
-    "severity": "critical",
-    "pattern": "printf\\s*\\(",
-    "suggestion": "Use non-blocking logging or set flags in ISR"
+    "description": "Avoid casting pointer to object types into pointer to other type",
+    "severity": "medium",
+    "pattern": "\\(\\s*\\w+\\s*\\*\\s*\\)\\s*\\w+",
+    "suggestion": "Ensure correct casting by using compatible pointer types"
   },
   {
     "id": "G004",
-    "description": "Avoid usage of function pointers for non-callback logic",
+    "description": "Avoid usage of function pointers for non-callback functionalities",
     "severity": "medium",
     "pattern": "\\*\\s*\\(\\s*\\*.*\\)\\s*\\(",
     "suggestion": "Use direct function calls unless it's a true callback mechanism"
   },
   {
     "id": "G005",
+    "description": "Use const and static keywords where applicable",
+    "severity": "low",
+    "pattern": "\\b(int|char|float|double)\\s+(?!static|const).*;",
+    "suggestion": "Mark local variables as const/static if they don't change or need persistence"
+  },
+  {
+    "id": "G006",
+    "description": "Avoid using delays like _delay_ms() or busy-wait loops",
+    "severity": "medium",
+    "pattern": "_delay_ms\\s*\\(|while\\s*\\(.*\\);",
+    "suggestion": "Use timers or event-based mechanisms instead of blocking delays"
+  },
+  {
+    "id": "G007",
+    "description": "Avoid tightly coupling application logic with hardware drivers",
+    "severity": "high",
+    "pattern": "HAL_|LL_|MX_",
+    "suggestion": "Use abstraction layers or wrapper interfaces for hardware access"
+  },
+  {
+    "id": "G008",
+    "description": "Modularize functionality using layered architecture",
+    "severity": "medium",
+    "pattern": ".*",
+    "suggestion": "Separate app, driver, middleware, and hardware-specific code"
+  },
+  {
+    "id": "G009",
     "description": "Avoid global variables across modules",
     "severity": "high",
-    "pattern": "^\\s*int\\s+[a-zA-Z_][a-zA-Z0-9_]*\\s*;",
-    "suggestion": "Encapsulate variables within functions or mark them static if needed locally"
+    "pattern": "^\\s*(int|char|float|double)\\s+[a-zA-Z_][a-zA-Z0-9_]*\\s*;",
+    "suggestion": "Encapsulate variables in functions or mark them static if needed locally"
+  },
+  {
+    "id": "G010",
+    "description": "Never use printf() or blocking calls inside ISRs",
+    "severity": "critical",
+    "pattern": "printf\\s*\\(",
+    "suggestion": "Use non-blocking logging or set flags in ISR"
+  },
+  {
+    "id": "G011",
+    "description": "Disable global interrupts before configuring hardware-triggered ISRs",
+    "severity": "medium",
+    "pattern": "NVIC_DisableIRQ|__disable_irq",
+    "suggestion": "Ensure atomic configuration by disabling global interrupts temporarily"
+  },
+  {
+    "id": "G012",
+    "description": "Clear interrupt flags before exiting ISR",
+    "severity": "medium",
+    "pattern": "EXTI->PR|IFG|INTFLAG",
+    "suggestion": "Clear the pending flags inside ISR to avoid re-entry"
+  },
+  {
+    "id": "G013",
+    "description": "Use volatile keyword for shared ISR variables",
+    "severity": "high",
+    "pattern": "\\bvolatile\\b",
+    "suggestion": "Declare ISR-shared variables as volatile to prevent compiler optimization"
+  },
+  {
+    "id": "G014",
+    "description": "Do not call blocking functions inside high-priority RTOS tasks",
+    "severity": "critical",
+    "pattern": "vTaskDelay|osDelay|sleep",
+    "suggestion": "Avoid delays in real-time tasks; restructure logic or lower priority"
+  },
+  {
+    "id": "G015",
+    "description": "Always use thread-safe APIs when accessing shared resources",
+    "severity": "high",
+    "pattern": "memcpy|strcpy|snprintf",
+    "suggestion": "Use reentrant/thread-safe versions or wrap with locks/semaphores"
+  },
+  {
+    "id": "G016",
+    "description": "Avoid creating too many tasks with small stack sizes",
+    "severity": "medium",
+    "pattern": "xTaskCreate|osThreadNew",
+    "suggestion": "Allocate sufficient stack space or consolidate tasks"
+  },
+  {
+    "id": "G017",
+    "description": "Avoid using debug UART in production builds",
+    "severity": "medium",
+    "pattern": "UART_Write|printf|puts",
+    "suggestion": "Disable debug output macros in production builds using #ifdefs"
+  },
+  {
+    "id": "G018",
+    "description": "Always check return values of hardware access functions",
+    "severity": "high",
+    "pattern": "HAL_\\w+\\s*\\(",
+    "suggestion": "Capture and validate return codes from hardware APIs"
   }
 ]

@@ -1,38 +1,26 @@
 [
     {
-        "lineNumber": 3,
-        "ruleViolated": "G005",
-        "explanation": "Global variable 'globalValue' found.",
-        "suggestedFix": "Encapsulate variables within functions or mark them static if needed locally."
-    },
-    {
-        "lineNumber": 9,
-        "ruleViolated": "G003",
-        "explanation": "printf() call inside ISR found.",
-        "suggestedFix": "Use non-blocking logging or set flags in ISR instead of printf()."
-    },
-    {
-        "lineNumber": 12,
+        "lineNumber": 13,
         "ruleViolated": "G001",
         "explanation": "Usage of '##' token pasting found.",
         "suggestedFix": "Avoid macro token pasting. Consider better macro design."
     },
     {
-        "lineNumber": 14,
+        "lineNumber": 15,
         "ruleViolated": "G002",
-        "explanation": "Void pointer usage found in function 'getBuffer'.",
-        "suggestedFix": "Use specific pointer types for better type safety instead of void pointers."
+        "explanation": "Void pointer usage detected.",
+        "suggestedFix": "Use specific pointer types for better type safety."
     },
     {
-        "lineNumber": 23,
-        "ruleViolated": "G004",
-        "explanation": "Improper use of function pointer found.",
-        "suggestedFix": "Use direct function calls unless it's a true callback mechanism."
+        "lineNumber": 27,
+        "ruleViolated": "G003",
+        "explanation": "Casting pointer to object type into pointer to other type found.",
+        "suggestedFix": "Ensure correct casting by using compatible pointer types."
     },
     {
-        "lineNumber": 16,
-        "ruleViolated": "G002",
-        "explanation": "Void pointer usage found in function 'getBuffer'.",
-        "suggestedFix": "Use specific pointer types for better type safety instead of void pointers."
+        "lineNumber": 130,
+        "ruleViolated": "G005",
+        "explanation": "Global variable 'bootMediaName' not marked as const or static.",
+        "suggestedFix": "Mark local variables as const/static if they don't change or need persistence."
     }
 ]
