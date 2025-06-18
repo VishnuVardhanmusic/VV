@@ -1,47 +1,37 @@
-import litellm
 import json
-import os
+import re
+from llm_provider import getClaudeResponse
 
-def runReview(prompt, model="ollama/llama3", max_tokens=2048):
+def runReview(prompt):
     """
-    Sends the prompt to the specified LLM using LiteLLM and returns JSON feedback.
+    Sends the prompt to Claude 3.5 Sonnet via LangChain-LiteLLM and returns JSON feedback.
 
     Args:
-        prompt (str): The prompt to review code.
-        model (str): The model identifier in LiteLLM config.
-        max_tokens (int): Token limit for the response.
+        prompt (str): The complete prompt to review code.
 
     Returns:
-        list: List of JSON review remarks returned by the model.
+        list: Parsed list of review remarks in JSON format.
     """
     try:
-        response = litellm.completion(
-            model=model,
-            messages=[{"role": "user", "content": prompt}],
-            temperature=0,
-            max_tokens=max_tokens
-        )
-        import re
-        output = response['choices'][0]['message']['content']
+        output = getClaudeResponse(prompt)
 
-        # Extract first valid JSON array using regex
+        # Extract the first valid JSON array from the response using regex
         json_match = re.search(r'\[\s*{.*?}\s*\]', output, re.DOTALL)
         if json_match:
             json_str = json_match.group(0)
             review_json = json.loads(json_str)
             return review_json
         else:
-            print("❌ Could not extract valid JSON array from LLM response.")
+            print("❌ Could not extract valid JSON array from Claude response.")
             print("📝 Raw Output:\n", output)
             return []
 
-    
     except json.JSONDecodeError:
-        print("❌ LLM response was not valid JSON.")
+        print("❌ Claude response was not valid JSON.")
         print("📝 Response:\n", output)
         return []
     except Exception as e:
-        print("❌ Error calling model:", str(e))
+        print("❌ Error calling Claude via LangChain:", str(e))
         return []
 
 def saveReviewToFile(reviewData, outputPath="code_review.json"):

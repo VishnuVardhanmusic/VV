@@ -1,128 +1,274 @@
 [
+    {
+        "id": "G001",
+        "description": "Avoid usage of ## operator",
+        "severity": "high",
+        "pattern": "##",
+        "suggestion": "Use proper macro expansion instead of token pasting",
+        "category": "Common"
+    },
+    {
+        "id": "G002",
+        "description": "Avoid usage of void pointers",
+        "severity": "medium",
+        "pattern": "void\\s*\\*",
+        "suggestion": "Use specific pointer types for better type safety",
+        "category": "Common"
+    },
+    {
+        "id": "G003",
+        "description": "Avoid casting pointer to object types into pointer to other type",
+        "severity": "medium",
+        "pattern": "\\(\\s*\\w+\\s*\\*\\s*\\)\\s*\\w+",
+        "suggestion": "Ensure correct casting by using compatible pointer types",
+        "category": "Common"
+    },
+    {
+        "id": "G004",
+        "description": "Avoid usage of function pointers for non-callback functionalities",
+        "severity": "medium",
+        "pattern": "\\*\\s*\\(\\s*\\*.*\\)\\s*\\(",
+        "suggestion": "Use direct function calls unless it's a true callback mechanism",
+        "category": "Common"
+    },
+    {
+        "id": "G005",
+        "description": "Use const and static keywords where applicable",
+        "severity": "low",
+        "pattern": "\\b(int|char|float|double)\\s+(?!static|const).*;",
+        "suggestion": "Mark local variables as const/static if they don't change or need persistence",
+        "category": "Coding"
+    },
+    {
+        "id": "G006",
+        "description": "Avoid using delays like _delay_ms() or busy-wait loops",
+        "severity": "medium",
+        "pattern": "_delay_ms\\s*\\(|while\\s*\\(.*\\);",
+        "suggestion": "Use timers or event-based mechanisms instead of blocking delays",
+        "category": "Application Logic"
+    },
+    {
+        "id": "G007",
+        "description": "Avoid tightly coupling application logic with hardware drivers",
+        "severity": "high",
+        "pattern": "HAL_|LL_|MX_",
+        "suggestion": "Use abstraction layers or wrapper interfaces for hardware access",
+        "category": "Architecture Design"
+    },
+    {
+        "id": "G008",
+        "description": "Modularize functionality using layered architecture",
+        "severity": "medium",
+        "pattern": ".*",
+        "suggestion": "Separate app, driver, middleware, and hardware-specific code",
+        "category": "Architecture Design"
+    },
+    {
+        "id": "G009",
+        "description": "Avoid global variables across modules",
+        "severity": "high",
+        "pattern": "^\\s*(int|char|float|double)\\s+[a-zA-Z_][a-zA-Z0-9_]*\\s*;",
+        "suggestion": "Encapsulate variables in functions or mark them static if needed locally",
+        "category": "Architecture Design"
+    },
+    {
+        "id": "G010",
+        "description": "Never use printf() or blocking calls inside ISRs",
+        "severity": "critical",
+        "pattern": "printf\\s*\\(",
+        "suggestion": "Use non-blocking logging or set flags in ISR",
+        "category": "Firmware Development"
+    },
+    {
+        "id": "G011",
+        "description": "Disable global interrupts before configuring hardware-triggered ISRs",
+        "severity": "medium",
+        "pattern": "NVIC_DisableIRQ|__disable_irq",
+        "suggestion": "Ensure atomic configuration by disabling global interrupts temporarily",
+        "category": "Firmware Development"
+    },
+    {
+        "id": "G012",
+        "description": "Clear interrupt flags before exiting ISR",
+        "severity": "medium",
+        "pattern": "EXTI->PR|IFG|INTFLAG",
+        "suggestion": "Clear the pending flags inside ISR to avoid re-entry",
+        "category": "Firmware Development"
+    },
+    {
+        "id": "G013",
+        "description": "Use volatile keyword for shared ISR variables",
+        "severity": "high",
+        "pattern": "\\bvolatile\\b",
+        "suggestion": "Declare ISR-shared variables as volatile to prevent compiler optimization",
+        "category": "Firmware Development"
+    },
+    {
+        "id": "G014",
+        "description": "Do not call blocking functions inside high-priority RTOS tasks",
+        "severity": "critical",
+        "pattern": "vTaskDelay|osDelay|sleep",
+        "suggestion": "Avoid delays in real-time tasks; restructure logic or lower priority",
+        "category": "RTOS Integration"
+    },
+    {
+        "id": "G015",
+        "description": "Always use thread-safe APIs when accessing shared resources",
+        "severity": "high",
+        "pattern": "memcpy|strcpy|snprintf",
+        "suggestion": "Use reentrant/thread-safe versions or wrap with locks/semaphores",
+        "category": "RTOS Integration"
+    },
+    {
+        "id": "G016",
+        "description": "Avoid creating too many tasks with small stack sizes",
+        "severity": "medium",
+        "pattern": "xTaskCreate|osThreadNew",
+        "suggestion": "Allocate sufficient stack space or consolidate tasks",
+        "category": "RTOS Integration"
+    },
+    {
+        "id": "G017",
+        "description": "Avoid using debug UART in production builds",
+        "severity": "medium",
+        "pattern": "UART_Write|printf|puts",
+        "suggestion": "Disable debug output macros in production builds using #ifdefs",
+        "category": "Testing & Debugging"
+    },
+    {
+        "id": "G018",
+        "description": "Always check return values of hardware access functions",
+        "severity": "high",
+        "pattern": "HAL_\\w+\\s*\\(",
+        "suggestion": "Capture and validate return codes from hardware APIs",
+        "category": "Coding"
+    },
   {
-    "id": "G001",
-    "description": "Avoid usage of ## operator",
+    "id": "G019",
+    "description": "Avoid unbounded array access",
     "severity": "high",
-    "pattern": "##",
-    "suggestion": "Use proper macro expansion instead of token pasting"
+    "category": "Memory Safety",
+    "pattern": "\\[\\s*[^\\]]*\\s*\\]",
+    "suggestion": "Ensure array accesses are within bounds using proper index checks"
   },
   {
-    "id": "G002",
-    "description": "Avoid usage of void pointers",
+    "id": "G020",
+    "description": "Ensure all memory allocations have null-checks",
+    "severity": "high",
+    "category": "Memory Safety",
+    "pattern": "malloc\\s*\\([^\\)]*\\)",
+    "suggestion": "Check if malloc returned NULL before dereferencing the pointer"
+  },
+  {
+    "id": "G021",
+    "description": "Do not use recursive functions",
+    "severity": "high",
+    "category": "Control Flow",
+    "pattern": "\\b[a-zA-Z_][a-zA-Z0-9_]*\\s*\\([^\\)]*\\)\\s*\\{[^\\}]*\\b\\1\\s*\\(",
+    "suggestion": "Refactor recursion into iterative logic for embedded reliability"
+  },
+  {
+    "id": "G022",
+    "description": "Avoid using malloc/free in production firmware",
+    "severity": "high",
+    "category": "Memory Management",
+    "pattern": "malloc|calloc|realloc|free",
+    "suggestion": "Use static allocation or memory pools instead of dynamic allocation"
+  },
+  {
+    "id": "G023",
+    "description": "Minimize logic inside ISRs",
+    "severity": "critical",
+    "category": "Interrupt Safety",
+    "pattern": "void\\s+\\w+_IRQHandler\\s*\\(.*\\)\\s*\\{[^}]*\\n",
+    "suggestion": "Perform only necessary operations in ISR, defer logic to main context"
+  },
+  {
+    "id": "G024",
+    "description": "Avoid calling non-deterministic APIs inside ISRs",
+    "severity": "critical",
+    "category": "Interrupt Safety",
+    "pattern": "sprintf|strcpy|malloc|free",
+    "suggestion": "Avoid complex APIs in ISR; set flags and handle in task/context"
+  },
+  {
+    "id": "G025",
+    "description": "Avoid race conditions by protecting shared variables",
+    "severity": "high",
+    "category": "Concurrency",
+    "pattern": "=\\s*[^;]*;",
+    "suggestion": "Use mutexes or disable interrupts to protect shared access"
+  },
+  {
+    "id": "G026",
+    "description": "Avoid deadlocks by consistent locking order",
     "severity": "medium",
-    "pattern": "void\\s*\\*",
-    "suggestion": "Use specific pointer types for better type safety"
+    "category": "Concurrency",
+    "pattern": "xSemaphoreTake|pthread_mutex_lock",
+    "suggestion": "Ensure consistent mutex acquisition order across threads"
   },
   {
-    "id": "G003",
-    "description": "Avoid casting pointer to object types into pointer to other type",
+    "id": "G027",
+    "description": "Limit function complexity (cyclomatic complexity < 10)",
     "severity": "medium",
-    "pattern": "\\(\\s*\\w+\\s*\\*\\s*\\)\\s*\\w+",
-    "suggestion": "Ensure correct casting by using compatible pointer types"
+    "category": "Code Quality",
+    "pattern": "if|for|while|case|default",
+    "suggestion": "Refactor large functions into smaller, manageable units"
   },
   {
-    "id": "G004",
-    "description": "Avoid usage of function pointers for non-callback functionalities",
+    "id": "G028",
+    "description": "Use function-like macros cautiously",
     "severity": "medium",
-    "pattern": "\\*\\s*\\(\\s*\\*.*\\)\\s*\\(",
-    "suggestion": "Use direct function calls unless it's a true callback mechanism"
+    "category": "Preprocessor",
+    "pattern": "#define\\s+\\w+\\s*\\([^)]*\\)",
+    "suggestion": "Use inline functions instead of macros to avoid side effects"
   },
   {
-    "id": "G005",
-    "description": "Use const and static keywords where applicable",
+    "id": "G029",
+    "description": "Avoid long macros spanning multiple lines",
     "severity": "low",
-    "pattern": "\\b(int|char|float|double)\\s+(?!static|const).*;",
-    "suggestion": "Mark local variables as const/static if they don't change or need persistence"
+    "category": "Preprocessor",
+    "pattern": "\\\\n",
+    "suggestion": "Use inline functions or break macro logic into smaller parts"
   },
   {
-    "id": "G006",
-    "description": "Avoid using delays like _delay_ms() or busy-wait loops",
+    "id": "G030",
+    "description": "Separate hardware init, logic, and communication",
     "severity": "medium",
-    "pattern": "_delay_ms\\s*\\(|while\\s*\\(.*\\);",
-    "suggestion": "Use timers or event-based mechanisms instead of blocking delays"
-  },
-  {
-    "id": "G007",
-    "description": "Avoid tightly coupling application logic with hardware drivers",
-    "severity": "high",
-    "pattern": "HAL_|LL_|MX_",
-    "suggestion": "Use abstraction layers or wrapper interfaces for hardware access"
-  },
-  {
-    "id": "G008",
-    "description": "Modularize functionality using layered architecture",
-    "severity": "medium",
+    "category": "Architecture",
     "pattern": ".*",
-    "suggestion": "Separate app, driver, middleware, and hardware-specific code"
+    "suggestion": "Create clear file/module boundaries for init, logic, and comms"
   },
   {
-    "id": "G009",
-    "description": "Avoid global variables across modules",
-    "severity": "high",
-    "pattern": "^\\s*(int|char|float|double)\\s+[a-zA-Z_][a-zA-Z0-9_]*\\s*;",
-    "suggestion": "Encapsulate variables in functions or mark them static if needed locally"
-  },
-  {
-    "id": "G010",
-    "description": "Never use printf() or blocking calls inside ISRs",
-    "severity": "critical",
-    "pattern": "printf\\s*\\(",
-    "suggestion": "Use non-blocking logging or set flags in ISR"
-  },
-  {
-    "id": "G011",
-    "description": "Disable global interrupts before configuring hardware-triggered ISRs",
+    "id": "G031",
+    "description": "Avoid compiler-specific extensions unless abstracted",
     "severity": "medium",
-    "pattern": "NVIC_DisableIRQ|__disable_irq",
-    "suggestion": "Ensure atomic configuration by disabling global interrupts temporarily"
+    "category": "Portability",
+    "pattern": "__attribute__|__asm__",
+    "suggestion": "Wrap compiler-specific extensions in macros for portability"
   },
   {
-    "id": "G012",
-    "description": "Clear interrupt flags before exiting ISR",
+    "id": "G032",
+    "description": "Wrap inline assembly using compiler directives",
     "severity": "medium",
-    "pattern": "EXTI->PR|IFG|INTFLAG",
-    "suggestion": "Clear the pending flags inside ISR to avoid re-entry"
+    "category": "Portability",
+    "pattern": "__asm|asm",
+    "suggestion": "Wrap inline assembly with #ifdefs or macros for cross-compiler support"
   },
   {
-    "id": "G013",
-    "description": "Use volatile keyword for shared ISR variables",
+    "id": "G033",
+    "description": "Avoid polling in tight loops for time-sensitive tasks",
     "severity": "high",
-    "pattern": "\\bvolatile\\b",
-    "suggestion": "Declare ISR-shared variables as volatile to prevent compiler optimization"
+    "category": "Performance",
+    "pattern": "while\\s*\\(.*\\);",
+    "suggestion": "Use timer interrupts or flags instead of busy-wait polling"
   },
   {
-    "id": "G014",
-    "description": "Do not call blocking functions inside high-priority RTOS tasks",
-    "severity": "critical",
-    "pattern": "vTaskDelay|osDelay|sleep",
-    "suggestion": "Avoid delays in real-time tasks; restructure logic or lower priority"
-  },
-  {
-    "id": "G015",
-    "description": "Always use thread-safe APIs when accessing shared resources",
-    "severity": "high",
-    "pattern": "memcpy|strcpy|snprintf",
-    "suggestion": "Use reentrant/thread-safe versions or wrap with locks/semaphores"
-  },
-  {
-    "id": "G016",
-    "description": "Avoid creating too many tasks with small stack sizes",
+    "id": "G034",
+    "description": "Ensure timer configurations are calculated and not hardcoded",
     "severity": "medium",
-    "pattern": "xTaskCreate|osThreadNew",
-    "suggestion": "Allocate sufficient stack space or consolidate tasks"
-  },
-  {
-    "id": "G017",
-    "description": "Avoid using debug UART in production builds",
-    "severity": "medium",
-    "pattern": "UART_Write|printf|puts",
-    "suggestion": "Disable debug output macros in production builds using #ifdefs"
-  },
-  {
-    "id": "G018",
-    "description": "Always check return values of hardware access functions",
-    "severity": "high",
-    "pattern": "HAL_\\w+\\s*\\(",
-    "suggestion": "Capture and validate return codes from hardware APIs"
+    "category": "Hardware Configuration",
+    "pattern": "TIM\\w*->ARR\\s*=\\s*\\d+",
+    "suggestion": "Use macros or formulas for timer values instead of magic numbers"
   }
 ]
