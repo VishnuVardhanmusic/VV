@@ -1,5 +1,0 @@
-pydantic
-pydantic-ai
-litellm
-requests
-tqdm

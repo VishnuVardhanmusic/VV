@@ -1,0 +1,18 @@
+[
+    {
+        "lineNumber": 17,
+        "ruleViolated": "G001",
+        "description": "Avoid usage of ## operator",
+        "severity": "high",
+        "explanation": "Usage of '##' token pasting found in HAL_GPIO_InitSafe() function.",
+        "suggestedFix": "Avoid macro token pasting. Consider better macro design."
+    },
+    {
+        "lineNumber": 112,
+        "ruleViolated": "G003",
+        "description": "Avoid casting pointer to object types into pointer to other type",
+        "severity": "medium",
+        "explanation": "Casting TIM2->ARR from uint32_t* to void found.",
+        "suggestedFix": "Ensure correct casting by using compatible pointer types."
+    }
+]

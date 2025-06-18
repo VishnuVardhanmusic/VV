@@ -1,25 +1,35 @@
-from src.review_engine import runReview
+import argparse
+from rule_loader import loadGuidelines
+from code_loader import readCodeFile
+from prompt_manager import buildPrompt
+from review_engine import runReview, saveReviewToFile
 
 def main():
-    # 🛠 Configuration
-    inputCodePath = "test_cases/sample.c"
-    guidelinePath = "guidelines/c_guidelines.json"
-    outputPath = "output/code_review.json"
+    parser = argparse.ArgumentParser(description="Embedded C Code Reviewer")
+    parser.add_argument("filepath", help="Path to input .c or .h file")
+    parser.add_argument("--guidelines", default="guidelines/c_guidelines.json", help="Path to guideline JSON file")
+    parser.add_argument("--model", default="ollama/llama3", help="Model name as configured in litellm_config.yaml")
+    parser.add_argument("--output", default="code_review.json", help="Path to save JSON review result")
+    args = parser.parse_args()
 
-    # 🔐 LiteLLM Proxy Credentials
-    proxy_url = "http://localhost:8000/v1/chat/completions"
-    model_name = "anthropic.claude-3-5-sonnet-20241022-v2:0"
-    api_key = "your-liteLLM-key"  # Replace with your real LiteLLM API key
+    try:
+        print("📥 Loading guidelines...")
+        rules = loadGuidelines(args.guidelines)
 
-    # 🚀 Run the code review
-    runReview(
-        inputCodePath=inputCodePath,
-        guidelinePath=guidelinePath,
-        outputPath=outputPath,
-        proxy_url=proxy_url,
-        model_name=model_name,
-        api_key=api_key
-    )
+        print("📄 Reading source code...")
+        code = readCodeFile(args.filepath)
+
+        print("✍️  Building review prompt...")
+        prompt = buildPrompt(code, rules)
+
+        print(f"🤖 Reviewing code with model: {args.model}")
+        reviewResult = runReview(prompt, model=args.model)
+
+        print("💾 Saving review remarks...")
+        saveReviewToFile(reviewResult, args.output)
+
+    except Exception as e:
+        print(f"❌ Error: {str(e)}")
 
 if __name__ == "__main__":
     main()

@@ -1,0 +1,66 @@
+[
+    {
+        "lineNumber": 6,
+        "ruleViolated": "G001",
+        "description": "Avoid usage of ## operator",
+        "severity": "high",
+        "explanation": "Usage of '##' token pasting found.",
+        "suggestedFix": "Avoid macro token pasting. Consider better macro design."
+    },
+    {
+        "lineNumber": 10,
+        "ruleViolated": "G002",
+        "description": "Avoid usage of void pointers",
+        "severity": "medium",
+        "explanation": "Void pointer 'getBuffer()' found.",
+        "suggestedFix": "Use specific pointer types for better type safety."
+    },
+    {
+        "lineNumber": 12,
+        "ruleViolated": "G009",
+        "description": "Avoid global variables across modules",
+        "severity": "high",
+        "explanation": "Global variable 'global_var' found.",
+        "suggestedFix": "Encapsulate variables in functions or mark them static if needed locally."
+    },
+    {
+        "lineNumber": 23,
+        "ruleViolated": "G023",
+        "description": "Minimize logic inside ISRs",
+        "severity": "critical",
+        "explanation": "Logic found inside ISR.",
+        "suggestedFix": "Perform only necessary operations in ISR, defer logic to main context."
+    },
+    {
+        "lineNumber": 25,
+        "ruleViolated": "G010",
+        "description": "Never use printf() or blocking calls inside ISRs",
+        "severity": "critical",
+        "explanation": "printf() found inside ISR.",
+        "suggestedFix": "Use non-blocking logging or set flags in ISR."
+    },
+    {
+        "lineNumber": 34,
+        "ruleViolated": "G020",
+        "description": "Ensure all memory allocations have null-checks",
+        "severity": "high",
+        "explanation": "malloc() without null check found.",
+        "suggestedFix": "Check if malloc returned NULL before dereferencing the pointer."
+    },
+    {
+        "lineNumber": 39,
+        "ruleViolated": "G004",
+        "description": "Avoid usage of function pointers for non-callback functionalities",
+        "severity": "medium",
+        "explanation": "Function pointer misuse found.",
+        "suggestedFix": "Use direct function calls unless it's a true callback mechanism."
+    },
+    {
+        "lineNumber": 47,
+        "ruleViolated": "G014",
+        "description": "Do not call blocking functions inside high-priority RTOS tasks",
+        "severity": "critical",
+        "explanation": "Blocking call 'vTaskDelay(100)' found.",
+        "suggestedFix": "Avoid delays in real-time tasks; restructure logic or lower priority."
+    }
+]
