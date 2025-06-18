@@ -1,38 +1,40 @@
 import json
 import re
-from llm_provider import getClaudeResponse
+from llm_provider import getClaudeChain
 
-def runReview(prompt):
+def runReview(prompt, max_tokens=2048):
     """
-    Sends the prompt to Claude 3.5 Sonnet via LangChain-LiteLLM and returns JSON feedback.
+    Sends the prompt to the Claude model via LangChain and returns JSON feedback.
 
     Args:
-        prompt (str): The complete prompt to review code.
+        prompt (str): The prompt to review code.
+        max_tokens (int): Token limit (still passed to LLM config).
 
     Returns:
-        list: Parsed list of review remarks in JSON format.
+        list: List of JSON review remarks returned by the model.
     """
     try:
-        output = getClaudeResponse(prompt)
+        chain = getClaudeChain()
+        output = chain.run(code_review_prompt=prompt)
 
-        # Extract the first valid JSON array from the response using regex
+        # Extract first valid JSON array using regex
         json_match = re.search(r'\[\s*{.*?}\s*\]', output, re.DOTALL)
         if json_match:
             json_str = json_match.group(0)
             review_json = json.loads(json_str)
             return review_json
         else:
-            print("❌ Could not extract valid JSON array from Claude response.")
+            print("❌ Could not extract valid JSON array from LLM response.")
             print("📝 Raw Output:\n", output)
             return []
 
     except json.JSONDecodeError:
-        print("❌ Claude response was not valid JSON.")
-        print("📝 Response:\n", output)
+        print("❌ LLM response was not valid JSON.")
         return []
     except Exception as e:
-        print("❌ Error calling Claude via LangChain:", str(e))
+        print("❌ Error during review:", str(e))
         return []
+
 
 def saveReviewToFile(reviewData, outputPath="code_review.json"):
     """

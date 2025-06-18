@@ -8,7 +8,6 @@ def main():
     parser = argparse.ArgumentParser(description="Embedded C Code Reviewer")
     parser.add_argument("filepath", help="Path to input .c or .h file")
     parser.add_argument("--guidelines", default="guidelines/c_guidelines.json", help="Path to guideline JSON file")
-    parser.add_argument("--model", default="anthropic.claude-3-5-sonnet-20241022-v2:0", help="Model name as configured in litellm_config.yaml")
     parser.add_argument("--output", default="code_review.json", help="Path to save JSON review result")
     args = parser.parse_args()
 
@@ -22,8 +21,8 @@ def main():
         print("✍️  Building review prompt...")
         prompt = buildPrompt(code, rules)
 
-        print(f"🤖 Reviewing code with model: {args.model}")
-        reviewResult = runReview(prompt, model=args.model)
+        print("🤖 Reviewing code via Claude 3.5 (LangChain)...")
+        reviewResult = runReview(prompt)
 
         print("💾 Saving review remarks...")
         saveReviewToFile(reviewResult, args.output)

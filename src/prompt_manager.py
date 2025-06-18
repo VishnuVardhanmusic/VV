@@ -37,24 +37,22 @@ def buildPrompt(codeLines, guidelineRules):
 ### Task for AI Agent:
 You are a code reviewer specialized in embedded C development.
 
-Review the above code **strictly** against the listed coding guidelines.
+Review the code strictly against the provided coding guidelines grouped by category.
 
-For every guideline violation, return a JSON list with the following structure:
+For each line that violates a rule, return a structured JSON object with the following fields:
 [
   {
-    "lineNumber": 12,
-    "ruleViolated": "G001",
-    "description": "Avoid usage of ## operator",
-    "severity": "high",
-    "explanation": "Usage of '##' token pasting found.",
-    "suggestedFix": "Avoid macro token pasting. Consider better macro design."
-  },
-  ...
+    "lineNumber": <int>,                 // Line in source code with violation
+    "ruleViolated": "<rule_id>",         // Guideline ID such as G001, G014 etc.
+    "description": "<rule description>", // Short title of what rule is violated
+    "severity": "<low|medium|high|critical>", // Rule's severity
+    "explanation": "<why it violates the rule>",
+    "suggestedFix": "<precise improvement or safer approach>"
+  }
 ]
 
-If the code is clean and has no violations, return an **empty list: []**.
+If no violations exist, return an **empty list: []** only.
 """
-
     # 4️⃣ Combine all
     finalPrompt = f"{formattedGuidelines}\n\n{formattedCode}\n\n{reviewInstruction}"
     return finalPrompt
